@@ -1,33 +1,41 @@
-
+# Creating the main function
 def main():
-    dir = {1:' ', 2:' ', 3:' ', 4:' ', 5:' ', 6:' ', 7:' ', 8:' ', 9:' '}
+    # Display a start menu with short instructions and an instanse of game field look
     dipslay_menu()
-    start = start_question()
-    while start == True:
-        subsequence = choose_first_player()
-        start = play_game(subsequence, dir)
-        
-
+    # Choose which player game with X or O simbol
+    subsequence = choose_first_player()
+    # Conferm of readiness for the game
+    start = ask_question('start')
+    # Start the game loop
+    while start:
+        game_field = ['*',' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+        play_game(subsequence, game_field)
+        # Ask a question about continue the game
+        start = ask_question('continue')
+        if start:
+            subsequence = choose_first_player()
+    print('It was nice to play this game with you. See you later.')
+    
+# Creating a function which shows the start explanation of the gane in the biggining.
 def dipslay_menu():
-    print('This is a program to provide 2 users playing the tic-tac-toe game.\n' +
-            'Firstly users must choose who make a step first.\n' +
+    print('This is a program to provide 2 players playing the tic-tac-toe game.\n' +
             'To make choise each of users can use the following rule:\n' +
             'Game field is lattice 3x3 cells. To make choise user should enter\n' +
             'a wished number of cell and press Enter. An instanse of such a lattice\n' +
-            'givven next:.---.---.---.\n' +
-            '            | 7 | 8 | 9 |\n'+
-            '            .---.---.---.\n' +
-            '            | 4 | 5 | 6 |\n' +
-            '            .---.---.---.\n' +
-            '            | 1 | 2 | 3 |\n' +
-            '            .---.---.---.\n')
+            'givven next:')
+    # Show an instance of game field with number of cells.
+    show_lattice_cells()
+    print('')
     print('If you are ready let\'s start the game! And may the best user win!')
     
-
-def start_question():
+# Creating a function which ask player of starting or continue of the game.
+def ask_question(argument):
     choise = 'WRONG'
     while choise not in ['Y', 'N']:
-        choise = input('If you are ready to start a new game enter Y to start or N to stop and press Enter: ')
+        if argument == 'start':
+            choise = input('If you are ready to start a new game enter Y to start or N to stop and press Enter: ')
+        if argument == 'continue':
+            choise = input('Do you want to try playing again? Enter Y or N: ')
         if choise.upper() not in ['Y', 'N']:
             print('Sorry, your choise isn\'t correct. Please make the right choise.')
             continue
@@ -36,105 +44,133 @@ def start_question():
         else:
             return False
         
+# Creating a function to choose whos player will start the game       
 def choose_first_player():
+    print('Firstly users must choose who make a step first.')
     print('To start playing we should choose who will play by X and who O.')
-    answer = False
-    while answer != True:
-        ask = input('Enter the simbol which you want to play in the game. You can choose X or O: ')
-        if ask.upper() == 'X':
+    answer = 'WRONG'
+    while answer not in ['X', 'O']:
+        answer = input('Player 1 should enter the simbol to start playing in the game. You can choose X or O: ')
+        if answer.upper() not in ['X', 'O']:
+            print('You entered the wrong item. Please enter the right item X or O.')
+            continue
+        if answer.upper() == 'X':
             print('The player 1 game with X, the player 2 game with O.')
-            answer = True
-            return {0:'X', 1:'O'}
-        elif ask.upper() == 'O':
-            print('The player 2 game with X, the player 1 game with O.')
-            answer = True
-            return {1:'X', 0:'O'}
+            return ('X', 'O')
         else:
-            answer = False
-            
-def show_lattice_cells(dir):
-    print('            .---.---.---.\n' +
-         f'            | {dir[7]} | {dir[8]} | {dir[9]} |\n'+
-          '            .---.---.---.\n' +
-         f'            | {dir[4]} | {dir[5]} | {dir[6]} |\n' +
-          '            .---.---.---.\n' +
-         f'            | {dir[1]} | {dir[2]} | {dir[3]} |\n' +
-          '            .---.---.---.')
-
-def play_game(players, dir):
-    win = False
-    if players[0]=='X':
-        play = 0
-        play1 = 'X'
-        play2 = 'O'
-    elif players[0]=='O':
-        play = 1
-        play2 = 'X'
-        play1 = 'O'
-    show_lattice_cells(dir)
-    while win!=True:
-        if play == 0:
-            print('Player 1 make his next step.')
-            step = ask_next_step()
-            dir[step] = play1
-            play = 1
-        else:
-            print('Player 2 make his next step.')
-            step = ask_next_step()
-            dir[step] = play2
-            play = 0
-        show_lattice_cells(dir)
-        result = check_win(dir)
-        if result =='':
-            win = False
-        else:
-            res_list = list(result)
-            if (res_list[1])[1]=='X':
-                if players[0]=='X':
-                    print('Congratulation! User 1 won!')
-                else:
-                    print('Congratulation! User 2 won!')
-                win = True
-            elif (res_list[1])[1]=='O':
-                if players[0]=='O':
-                    print('Congratulation! User 1 won!')
-                else:
-                    print('Congratulation! User 2 won!')
-                win = True
-                return False
-            
-                                
-def ask_next_step():
-    re_ask = True
-    right_list = ['1','2','3','4','5','6','7','8','9']
-    while re_ask==True:
-        answer = input('Please enter a number of cell where you want to go. Enter the number from 1 to 9: ')
-        if answer.isdigit()==True:  
-            if answer not in right_list:
-                print('You entered the wrong number. Please try again.')
-                re_ask = True
+            print('The player 1 game with O, the player 2 game with X.')
+            return ('O', 'X')
+        
+# Creating a function to display a current game field
+# To display game field in the start menu we assign a default items.
+def show_lattice_cells(list=['*','1','2','3','4','5','6','7','8','9']):
+    print(' '*12 + '.---.---.---.\n' +
+          ' '*12 + '| '+list[7]+' | '+list[8]+' | '+list[9]+' |\n'+
+          ' '*12 + '.---.---.---.\n' +
+          ' '*12 + '| '+list[4]+' | '+list[5]+' | '+list[6]+' |\n'+
+          ' '*12 + '.---.---.---.\n' +
+          ' '*12 + '| '+list[1]+' | '+list[2]+' | '+list[3]+' |\n'+
+          ' '*12 + '.---.---.---.')
+    
+# Creating a function which consists of making users' steps, checking victory or tie 
+# and displaying the result.
+def play_game(players, field):
+    continue_game = True
+    player1, player2 = players
+    if player1 == 'X':
+        steps = 1 
+    else:
+        steps = 2
+    while continue_game:
+        for i in range(steps,11):       
+            if i%2==0:
+                field[make_step(field)] = player2 
+                show_lattice_cells(field)
+                print('Player 2 made turn.')
             else:
-                re_ask = False
-                return int(answer)
+                field[make_step(field)] = player1
+                print('Player 1 made turn.')
+                show_lattice_cells(field)
+            steps += 1
+            # Check is any of players is won
+            result = check_win(field)
+            if result != '':
+                #Show the game field with crossed out letters
+                for item in result:
+                    field[int(item[0])] = '*'
+                show_lattice_cells(field)
+                #Show the result of the game
+                if result[0][1]=='X' and player1=='X':
+                    print('Congratulation! User 1 won!')
+                elif result[0][1]=='X' and player1=='O':
+                    print('Congratulation! User 2 won!')
+                elif result[0][1]=='O' and player1=='X':
+                    print('Congratulation! User 2 won!')
+                else:
+                    print('Congratulation! User 1 won!')
+                continue_game = False
+                break
+            # Check is the game can be continued or players gamed tie.
+            is_tie = check_tie(field)
+            if is_tie:
+                print('It\'s a draw!')
+                continue_game = False
+                break
+    
+    
+            
+# Creating a function to input the correct number of cell in game fielf from user.
+# We should also check that this cell is empty.                               
+def make_step(field):
+    empty_check = True
+    while empty_check:
+        choise = 'WRONG'
+        right_choise = ['1','2','3','4','5','6','7','8','9']
+        while choise not in right_choise:
+            choise = input('Please enter a number of cell. Enter the number from 1 to 9: ')
+            if choise.isdigit()==False:
+                print('You entered not a number. Please enter the right item.')
+                continue 
+            if choise not in right_choise:
+                print('You entered the wrong number. Please try again.')
+        # Checking current cell is it empty
+        empty_check = check_empty(int(choise), field)
+        if empty_check:
+            print(f'You choose an existed item in cell {choise}. Please enter number which hasn\'t existed yet.')
+            continue
         else:
-            print('You entered not a number. Please enter the right item.')
-            re_ask = True
-
-def check_win(dir):
+            return int(choise)
+        
+# Creating a function to check consist of cell.          
+def check_empty(number, cells):
+    if cells[number]!=' ':
+        return True
+    else:
+        return False
+        
+# Creating a function to check has user already won yet.
+def check_win(field):
+    # Set of the right combination of victory.
     set_list = [{'1X','4X','7X'}, {'2X','5X','8X'}, {'3X','6X','9X'}, {'1X','2X','3X'},
-            {'4X','5X','6X'}, {'7X','8X','9X'}, {'1X','5X','9X'}, {'3X','5X','7X'},
-            {'1O','4O','7O'}, {'2O','5O','8O'}, {'3O','6O','9O'}, {'1O','2O','3O'},
-            {'4O','5O','6O'}, {'7O','8O','9O'}, {'1O','5O','9O'}, {'3O','5O','7O'}]
-    list = []
-    for key,value in dir.items():
-        list.append(str(key)+value)
-    set_l = set(list)
+                {'4X','5X','6X'}, {'7X','8X','9X'}, {'1X','5X','9X'}, {'3X','5X','7X'},
+                {'1O','4O','7O'}, {'2O','5O','8O'}, {'3O','6O','9O'}, {'1O','2O','3O'},
+                {'4O','5O','6O'}, {'7O','8O','9O'}, {'1O','5O','9O'}, {'3O','5O','7O'}]
+    current_field = []
+    for i in range(1, len(field)):
+        current_field.append(str(i)+field[i])
     for item in set_list:
-        if (set.intersection(set_l, item))==item:
-            return item
+        if (set.intersection(set(current_field), item))==item:
+            return list(item)
     else:
         return ''
-        
 
+# Creating a function to check is the result of the gami os tie
+def check_tie(field):
+    if ' ' not in field:
+        return True
+    else:
+        return False
+
+# Exsecute the main function
 if __name__ == '__main__':
     main()
