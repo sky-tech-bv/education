@@ -59,23 +59,30 @@ class Player:
                 counter += 1
                 
     def take_current_score(self):
-        self.current_score = 0
+        current_score = 0
+        minus = False
         for item in self.cards_player_has:
-            if self.current_score > 21:
+            current_score += item.value
+            if current_score > 21:
                 if item.rank == 'Ace':
-                    self.current_score += 1
-                else:
-                    self.current_score += item.value
-        return self.current_score
+                    minus = True
+        if minus:
+            current_score = current_score - 10
+        return current_score
                     
     def show_result(self):
         print(f'The {self.name} has the following cards: ')
         counter = 1
         score = 0
+        nimus = False
         for card in self.cards_player_has:
             print(str(counter) + '. ' + str(card) + f'. It\'s costs {card.value} points.')
             counter += 1
             score += card.value
+            if card.rank == 'Ace':
+                nimus = True
+        if nimus:
+            score = score - 10
         print(f'The total score for {self.name} is {score}.')
         return score
     
@@ -102,12 +109,12 @@ def main():
     begining = is_continue()
     game1 = Game()
     counter_game = 1
+    name = input('For continue gaming please enter your name: ')
     while begining:
         if counter_game >= 2:
             game1 = Game(False)
         counter_game += 1
         game1.start_display()
-        name = input('For continue gaming please enter your name: ')
         player1 = Player(name)
         dealer = Player()
         first_deck.shuffle_deck()
@@ -129,14 +136,14 @@ def main():
                 break
             answer = take_next_step()
             if answer == 0:
-                if dealer.current_score < 17 :
+                if dealer.take_current_score() < 17 :
                     give_a_card(dealer, first_deck, 1)
                     continue
                 else:
                     continue
             if answer == 1:
                 give_a_card(player1, first_deck, 1)
-                if dealer.current_score < 17 :
+                if dealer.take_current_score() < 17 :
                     give_a_card(dealer, first_deck, 1)
                     continue
                 else:
@@ -144,7 +151,9 @@ def main():
                 
             if answer == 2:
                 dealer_score = dealer.show_result()
+                print('')
                 player1_score = player1.show_result()
+                print('')
                 if player1_score > dealer_score and player1_score <= 21:
                     print(f'{player1.name} has won!')
                     begining = is_continue(1)
@@ -187,7 +196,9 @@ def give_a_card(player, deck, cards_count):
 def show_game_desc(player1, player2):
     print('It\'s the curent game table:')
     player2.show_cards()
+    print('')
     player1.show_cards()
+    print('')
     
 def take_next_step():
     answer = 'Wrong'
@@ -195,7 +206,7 @@ def take_next_step():
         print('Enter what you want to do: give one more card - <card>, pass next step - <pass>')
         answer = input('and finish the game and know who is winner - <open>: ')
         if answer.lower() not in ['pass', 'card', 'open']:
-            print('YOu entered the wrong item. Please enter the correct item.')
+            print('You entered the wrong item. Please enter the correct item.')
             continue
         if answer.lower() == 'pass':
             return 0
