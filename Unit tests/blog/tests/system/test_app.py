@@ -45,18 +45,15 @@ class AppTest(TestCase):
                 mocked_print_blogs.assert_called()
 
 
-    def test_menu_calls_read_blog(self):
+    def test_menu_calls_ask_read_blogs(self):
         with patch('builtins.input') as mocked_input:
             with patch('app.ask_read_blog') as mocked_ask_read_blog:
-                with patch('app.print_posts') as mocked_print_posts:
 
-                    mocked_input.side_effect = ('r ', 'Test', 'q')
-                    mocked_print_posts(app.blogs['Test'])
+                mocked_input.side_effect = ('r ', 'Test', 'q')
 
-                    app.menu()
+                app.menu()
 
-                    mocked_ask_read_blog.assert_called()
-
+                mocked_ask_read_blog.assert_called()
 
 
     def test_menu_print_prompt(self):
